@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyP2P — Trade Clean Energy with Your Neighbours</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="login-page">
+
+  <!-- ── Hero Panel ─────────────────────────────────────── -->
+  <aside class="login-hero">
+    <div class="hero-logo">
+      🌱 EnergyP2P
+    </div>
+
+    <div>
+      <p class="hero-eyebrow">Peer-to-peer energy trading</p>
+      <h1 class="hero-headline">
+        Trade clean energy<br><em>directly</em> with<br>your neighbours
+      </h1>
+      <p class="hero-desc">
+        A simpler, fairer way to buy and sell excess solar, wind, and hydro energy
+        within your local community. Wallets settle instantly — no middlemen.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="n">3</div>
+        <div class="l">Energy sources</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n">₹0</div>
+        <div class="l">Trading fees</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n">Live</div>
+        <div class="l">Settlements</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Forms Panel ────────────────────────────────────── -->
+  <main class="login-forms">
+
+    <!-- Login -->
+    <div class="box">
+      <h2><span class="icon">→</span> Sign in</h2>
+
+      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px;">Quick access</p>
+      <div class="quick-login">
+        <button data-login="producer@energy.com" type="button">⚡ Producer</button>
+        <button data-login="consumer@energy.com" type="button">🏠 Consumer</button>
+        <button data-login="admin@energy.com"    type="button">🔑 Admin</button>
+      </div>
+
+      <form id="loginForm">
+        <label>
+          Email
+          <input id="loginEmail" type="email" value="producer@energy.com" placeholder="you@energy.com" required>
+        </label>
+        <label>
+          Password
+          <input id="loginPassword" type="password" value="1234" placeholder="••••••••" required>
+        </label>
+        <button type="submit">Sign in to dashboard →</button>
+      </form>
+      <p id="loginMessage" class="message"></p>
+    </div>
+
+    <!-- Register -->
+    <div class="box">
+      <h2><span class="icon">+</span> Create account</h2>
+      <div class="notice">New accounts need admin approval before trading starts.</div>
+      <form id="registerForm">
+        <div class="grid-2">
+          <label>
+            Full name
+            <input id="registerName" type="text" placeholder="Ravi Kumar" required>
+          </label>
+          <label>
+            Grid zone
+            <input id="registerZone" type="text" value="North Zone">
+          </label>
+          <label>
+            Email
+            <input id="registerEmail" type="email" placeholder="you@energy.com" required>
+          </label>
+          <label>
+            Role
+            <select id="registerRole">
+              <option value="PRODUCER">⚡ Producer</option>
+              <option value="CONSUMER">🏠 Consumer</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          Password
+          <input id="registerPassword" type="password" placeholder="Choose a password" required>
+        </label>
+        <button type="submit">Create account</button>
+      </form>
+      <p id="registerMessage" class="message"></p>
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

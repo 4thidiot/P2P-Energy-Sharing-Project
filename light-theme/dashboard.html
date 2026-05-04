@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — EnergyP2P</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ── Navbar ─────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="logo">🌱 EnergyP2P</div>
+    <div class="nav-links">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="marketplace.html">Marketplace</a>
+      <button id="logoutBtn" type="button" class="secondary" style="height:36px;font-size:13px;">Sign out</button>
+    </div>
+  </nav>
+
+  <main class="container page">
+
+    <!-- ── Account Summary ─────────────────────────────── -->
+    <div class="box">
+      <h2><span class="icon">◈</span> Account Summary</h2>
+      <p id="userLine" style="font-size:13px;color:var(--text-muted);margin-top:-12px;margin-bottom:20px;"></p>
+      <div class="summary">
+        <div class="stat-card">
+          <div class="label">Name</div>
+          <div class="value" id="summaryName">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Role</div>
+          <div class="value" id="summaryRole">—</div>
+        </div>
+        <div class="stat-card wallet-card">
+          <div class="label">Wallet Balance</div>
+          <div class="value green" id="summaryWallet">₹ 0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Producer: Add Listing ───────────────────────── -->
+    <div id="producerBox" class="box accent-left hide">
+      <h2><span class="icon">⚡</span> List Energy for Sale</h2>
+      <form id="listingForm">
+        <div class="grid-2">
+          <label>
+            Units available (kWh)
+            <input id="listingUnits" type="number" min="1" value="10" required>
+          </label>
+          <label>
+            Price per unit (₹)
+            <input id="listingPrice" type="number" min="1" step="0.25" value="6.50" required>
+          </label>
+          <label>
+            Energy source
+            <select id="energyType">
+              <option value="SOLAR">☀️  Solar</option>
+              <option value="WIND">💨  Wind</option>
+              <option value="HYDRO">💧  Hydro</option>
+            </select>
+          </label>
+          <div style="display:flex;align-items:flex-end;">
+            <button type="submit">Create listing →</button>
+          </div>
+        </div>
+      </form>
+      <p id="listingMessage" class="message"></p>
+    </div>
+
+    <!-- ── Consumer ────────────────────────────────────── -->
+    <div id="consumerBox" class="box hide">
+      <h2><span class="icon">🏠</span> Buy Energy</h2>
+      <p class="muted" style="margin-bottom:18px;">Browse available producers and purchase energy directly from the marketplace.</p>
+      <a class="button" href="marketplace.html">Open Marketplace →</a>
+    </div>
+
+    <!-- ── Smart Meter ─────────────────────────────────── -->
+    <div class="box">
+      <h2><span class="icon">📡</span> Smart Meter Reading</h2>
+      <form id="meterForm">
+        <div class="grid-2">
+          <label>
+            Units generated (kWh)
+            <input id="generatedUnits" type="number" min="0" value="20">
+          </label>
+          <label>
+            Units consumed (kWh)
+            <input id="consumedUnits" type="number" min="0" value="8">
+          </label>
+          <div style="display:flex;align-items:flex-end;">
+            <button type="submit">Save reading</button>
+          </div>
+        </div>
+      </form>
+      <p id="meterMessage" class="message"></p>
+    </div>
+
+    <!-- ── Admin Panel ─────────────────────────────────── -->
+    <div id="adminBox" class="box accent-amber hide">
+      <h2><span class="icon" style="background:#fef9e7;">🔑</span> Admin Panel</h2>
+
+      <h3>Pending approvals</h3>
+      <div class="table-wrap" style="margin-bottom:24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pendingUsers"></tbody>
+        </table>
+      </div>
+
+      <h3>System logs</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Event</th><th>Timestamp</th></tr>
+          </thead>
+          <tbody id="adminLogs"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── My Listings + Transactions ──────────────────── -->
+    <div class="grid-2">
+
+      <div class="box" style="margin-bottom:0;">
+        <h2 style="font-size:18px;"><span class="icon">📋</span> My Listings</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Units</th><th>Price</th><th>Source</th><th>Status</th></tr>
+            </thead>
+            <tbody id="myListings"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="box" style="margin-bottom:0;">
+        <h2 style="font-size:18px;"><span class="icon">⇄</span> Transactions</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Buyer</th><th>Seller</th><th>Units</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="transactions"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    // Patch empty states and enhance table rendering
+    setTimeout(() => {
+      function energyChip(type) {
+        const t = (type || '').toLowerCase();
+        const icons = { solar: '☀️', wind: '💨', hydro: '💧' };
+        return `<span class="type-chip ${t}">${icons[t] || ''} ${type}</span>`;
+      }
+      const obs = new MutationObserver(() => {
+        document.querySelectorAll('#myListings tr td:nth-child(4)').forEach(td => {
+          if (!td.dataset.typed) { td.innerHTML = energyChip(td.textContent.trim()); td.dataset.typed = '1'; }
+        });
+        document.querySelectorAll('tbody tr td:first-child').forEach(td => td.classList.add('id-cell'));
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+    }, 50);
+  </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace — EnergyP2P</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ── Navbar ─────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="logo">🌱 EnergyP2P</div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="marketplace.html" class="active">Marketplace</a>
+      <button id="logoutBtn" type="button" class="secondary" style="height:36px;font-size:13px;">Sign out</button>
+    </div>
+  </nav>
+
+  <main class="container page">
+
+    <div class="grid-2" style="margin-bottom:20px;">
+
+      <!-- Buy form -->
+      <div class="box accent-left" style="margin-bottom:0;">
+        <h2><span class="icon">⚡</span> Buy Energy</h2>
+        <form id="buyForm">
+          <label>
+            Listing ID
+            <input id="buyListingId" type="number" min="1" placeholder="e.g. 1" required>
+          </label>
+          <label>
+            Units to buy (kWh)
+            <input id="buyUnits" type="number" min="1" value="5" required>
+          </label>
+          <button type="submit">Purchase units →</button>
+        </form>
+        <p id="buyMessage" class="message"></p>
+      </div>
+
+      <!-- Search -->
+      <div class="box" style="margin-bottom:0;">
+        <h2><span class="icon">🔍</span> Find Listings</h2>
+        <p class="muted" style="margin-bottom:14px;font-size:13px;">Filter by producer, zone, or energy source.</p>
+        <div class="row" style="margin-bottom:12px;">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input id="searchBox" type="search" placeholder="Search producers, zones…">
+          </div>
+          <button id="refreshBtn" type="button" class="secondary">↻ Refresh</button>
+        </div>
+        <div class="row" id="filterChips">
+          <button type="button" class="ghost filter-chip active" data-filter="">All</button>
+          <button type="button" class="ghost filter-chip" data-filter="solar">☀️ Solar</button>
+          <button type="button" class="ghost filter-chip" data-filter="wind">💨 Wind</button>
+          <button type="button" class="ghost filter-chip" data-filter="hydro">💧 Hydro</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Listings table -->
+    <div class="box">
+      <div class="section-header">
+        <h2><span class="icon">📋</span> Available Listings</h2>
+        <span id="listingCount" style="font-size:13px;color:var(--text-muted);"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Producer</th><th>Zone</th><th>Units</th>
+              <th>Price / Unit</th><th>Source</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="listingRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    (function () {
+      const user = App.requireLogin();
+      if (!user) return;
+
+      document.getElementById('logoutBtn').addEventListener('click', App.logout);
+
+      let allListings = [];
+      let activeFilter = '';
+
+      function energyChip(type) {
+        const t = (type || '').toLowerCase();
+        const icons = { solar: '☀️', wind: '💨', hydro: '💧' };
+        return `<span class="type-chip ${t}">${icons[t] || ''} ${type}</span>`;
+      }
+
+      function renderListings() {
+        const search = document.getElementById('searchBox').value.toLowerCase();
+        const rows = allListings.filter(item => {
+          const hay = [item.producer_name, item.zone_name, item.energy_type].join(' ').toLowerCase();
+          return hay.includes(search) && (!activeFilter || item.energy_type.toLowerCase() === activeFilter);
+        });
+
+        const countEl = document.getElementById('listingCount');
+        countEl.textContent = rows.length === allListings.length
+          ? `${rows.length} listing${rows.length !== 1 ? 's' : ''}`
+          : `${rows.length} of ${allListings.length} listings`;
+
+        document.getElementById('listingRows').innerHTML = rows.length
+          ? rows.map(item => `
+              <tr>
+                <td class="id-cell">${item.listing_id}</td>
+                <td style="font-weight:500;">${item.producer_name}</td>
+                <td style="color:var(--text-muted);font-size:12px;">${item.zone_name}</td>
+                <td><b>${item.units_available}</b> <span style="color:var(--text-subtle);font-size:11px;">kWh</span></td>
+                <td>${App.money(item.price_per_unit)}</td>
+                <td>${energyChip(item.energy_type)}</td>
+                <td>${App.status(item.status)}</td>
+                <td>${item.status === 'OPEN' ? `<button class="buy-row-btn" data-id="${item.listing_id}">Buy →</button>` : ''}</td>
+              </tr>
+            `).join('')
+          : '<tr class="empty-row"><td colspan="8">No listings match your search.</td></tr>';
+
+        document.querySelectorAll('.buy-row-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.getElementById('buyListingId').value = btn.dataset.id;
+            document.getElementById('buyListingId').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('buyListingId').focus();
+          });
+        });
+      }
+
+      async function loadListings() {
+        const data = await App.request('/listings');
+        allListings = data.listings;
+        renderListings();
+      }
+
+      document.getElementById('searchBox').addEventListener('input', renderListings);
+      document.getElementById('refreshBtn').addEventListener('click', loadListings);
+
+      document.getElementById('filterChips').addEventListener('click', e => {
+        const chip = e.target.closest('.filter-chip');
+        if (!chip) return;
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.dataset.filter;
+        renderListings();
+      });
+
+      document.getElementById('buyForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const msg = document.getElementById('buyMessage');
+        msg.textContent = 'Processing…';
+        msg.className = 'message';
+        try {
+          const data = await App.request('/buy-energy', {
+            method: 'POST',
+            body: {
+              buyer_id: user.user_id,
+              listing_id: Number(document.getElementById('buyListingId').value),
+              units: Number(document.getElementById('buyUnits').value)
+            }
+          });
+          msg.textContent = `✓ ${data.message}`;
+          msg.className = 'message success';
+          loadListings();
+        } catch (err) {
+          msg.textContent = err.message;
+          msg.className = 'message error';
+        }
+      });
+
+      loadListings();
+    })();
+  </script>
+</body>
+</html>
