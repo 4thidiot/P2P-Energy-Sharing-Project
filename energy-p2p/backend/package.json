@@ -1,0 +1,18 @@
+{
+  "name": "energy-p2p-backend",
+  "version": "2.0.0",
+  "description": "Simple Node/Express API gateway for an Oracle PL/SQL based peer-to-peer energy trading project.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/oracleGateway.js && node --check src/demoGateway.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "oracledb": "^6.7.1"
+  }
+}

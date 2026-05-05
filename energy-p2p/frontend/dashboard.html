@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Energy P2P</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">
+        <h1>Energy P2P Trading System</h1>
+        <p id="userLine">Dashboard</p>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="marketplace.html">Marketplace</a>
+        <button id="logoutBtn" type="button">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page">
+    <section class="box">
+      <h2>Account Summary</h2>
+      <div class="summary">
+        <div>
+          <span>Name</span>
+          <b id="summaryName">-</b>
+        </div>
+        <div>
+          <span>Role</span>
+          <b id="summaryRole">-</b>
+        </div>
+        <div>
+          <span>Wallet Balance</span>
+          <b id="summaryWallet">Rs. 0</b>
+        </div>
+      </div>
+    </section>
+
+    <section id="producerBox" class="box hide">
+      <h2>Producer: Add Energy Listing</h2>
+      <form id="listingForm" class="grid-2">
+        <label>
+          Units Available
+          <input id="listingUnits" type="number" min="1" value="10" required>
+        </label>
+        <label>
+          Price Per Unit
+          <input id="listingPrice" type="number" min="1" step="0.25" value="6.50" required>
+        </label>
+        <label>
+          Energy Type
+          <select id="energyType">
+            <option value="SOLAR">Solar</option>
+            <option value="WIND">Wind</option>
+            <option value="HYDRO">Hydro</option>
+          </select>
+        </label>
+        <div>
+          <button type="submit">Add Listing</button>
+        </div>
+      </form>
+      <p id="listingMessage" class="message"></p>
+    </section>
+
+    <section id="consumerBox" class="box hide">
+      <h2>Consumer</h2>
+      <p>Go to the marketplace to see available sellers and buy energy.</p>
+      <a class="button" href="marketplace.html">Open Marketplace</a>
+    </section>
+
+    <section class="box">
+      <h2>Smart Meter Reading</h2>
+      <form id="meterForm" class="grid-2">
+        <label>
+          Units Generated
+          <input id="generatedUnits" type="number" min="0" value="20">
+        </label>
+        <label>
+          Units Consumed
+          <input id="consumedUnits" type="number" min="0" value="8">
+        </label>
+        <div>
+          <button type="submit">Save Reading</button>
+        </div>
+      </form>
+      <p id="meterMessage" class="message"></p>
+    </section>
+
+    <section id="adminBox" class="box hide">
+      <h2>Admin Panel</h2>
+      <h3>Pending Users</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="pendingUsers"></tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top: 18px;">Admin Logs</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Action</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="adminLogs"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="box">
+        <h2>My Listings</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Units</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="myListings"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>Transactions</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Buyer</th>
+                <th>Seller</th>
+                <th>Units</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="transactions"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

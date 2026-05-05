@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace | Energy P2P</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">
+        <h1>Energy Marketplace</h1>
+        <p id="marketUser">Available energy listings</p>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="marketplace.html">Marketplace</a>
+        <button id="logoutBtn" type="button">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page">
+    <section class="box">
+      <h2>Search Listings</h2>
+      <div class="row">
+        <input id="searchBox" type="search" placeholder="Search producer, zone or type">
+        <button id="refreshBtn" type="button">Refresh</button>
+      </div>
+    </section>
+
+    <section class="box">
+      <h2>Buy Energy</h2>
+      <form id="buyForm" class="grid-2">
+        <label>
+          Listing ID
+          <input id="buyListingId" type="number" min="1" required>
+        </label>
+        <label>
+          Units
+          <input id="buyUnits" type="number" min="1" value="5" required>
+        </label>
+        <div>
+          <button type="submit">Buy</button>
+        </div>
+      </form>
+      <p id="buyMessage" class="message"></p>
+    </section>
+
+    <section class="box">
+      <h2>Available Listings</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Listing ID</th>
+              <th>Producer</th>
+              <th>Zone</th>
+              <th>Units</th>
+              <th>Price / Unit</th>
+              <th>Type</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="listingRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/marketplace.js"></script>
+</body>
+</html>
